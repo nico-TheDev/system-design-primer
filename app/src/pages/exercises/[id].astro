@@ -1,0 +1,54 @@
+---
+import { actions } from 'astro:actions';
+import { getEntry } from 'astro:content';
+import DoneButton from '@/components/DoneButton.astro';
+import PathPager from '@/components/PathPager.astro';
+import Shell from '@/layouts/Shell.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+import { doneDate } from '@/lib/progress';
+import { EXERCISES_HREF, exerciseHeadings } from '@/lib/study-path';
+
+// Redirect after a saved press so a browser refresh never offers to resubmit the form.
+const saved = Astro.getActionResult(actions.setProgress);
+if (saved && !saved.error) return Astro.redirect(Astro.url.pathname, 303);
+
+const { id } = Astro.params;
+const { path, index } = await loadStudyPath();
+const entry = path.exercises.find((e) => e.id === id);
+const exercise = id ? (await getEntry('exercises', id))?.data : undefined;
+if (!entry || !exercise) return Astro.rewrite('/404');
+---
+
+<Shell
+  title={`${exercise.title} · System Design Study`}
+  runningHead={`${entry.number} · ${exercise.title}`}
+  nav={path.nav}
+  headings={exerciseHeadings(exercise)}
+>
+  <h1>{exercise.title}</h1>
+  <Fragment set:html={exercise.problem} />
+  {exercise.split &&
+    exercise.solution.map((section, index) => (
+      <>
+        {index === 0 && <p class="running-head solution-label">Solution</p>}
+        <h2 id={section.anchor}>{section.title}</h2>
+        <Fragment set:html={section.html} />
+      </>
+    ))}
+  <DoneButton kind="exercise" id={entry.id} completedAt={doneDate(index, 'exercise', entry.id)} />
+  <PathPager
+    label="Previous and next exercise"
+    prev={entry.prev}
+    next={entry.next}
+    middle={{ title: 'All exercises', href: EXERCISES_HREF }}
+  />
+</Shell>
+
+<style>
+  .solution-label {
+    margin: 3rem 0 0;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+</style>

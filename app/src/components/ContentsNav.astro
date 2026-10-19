@@ -1,0 +1,81 @@
+---
+import DoneMark from '@/components/ui/DoneMark.astro';
+import type { NavSection } from '@/lib/nav';
+
+interface Props {
+  sections: readonly NavSection[];
+  currentPath: string;
+  label: string;
+}
+const { sections, currentPath, label } = Astro.props;
+
+// /topics/x and /topics/x/ are the same page.
+const trim = (path: string) => (path.length > 1 ? path.replace(/\/$/, '') : path);
+const isCurrent = (href: string) => trim(href) === trim(currentPath);
+---
+
+<nav aria-label={label} class="contents-nav">
+  {sections.map((section) => (
+    <section>
+      {section.label && <p class="running-head group-label">{section.label}</p>}
+      <ol>
+        {section.items.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.number && <span class="num">{item.number}</span>}
+              <span class="title">{item.title}</span>
+              {item.done && <DoneMark />}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+</nav>
+
+<style>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .group-label {
+    margin: 1.25rem 0.5rem 0.35rem;
+    color: var(--ink-faint);
+  }
+  section:first-child .group-label {
+    margin-block-start: 0.25rem;
+  }
+  a {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.35rem 0.5rem;
+    min-block-size: 2rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-inline-start: 2px solid transparent;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+  a:hover {
+    background: var(--accent-wash);
+    color: var(--ink);
+  }
+  a[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 600;
+    background: var(--accent-wash);
+    border-inline-start-color: var(--accent);
+  }
+  .title {
+    flex: 1;
+  }
+  .num {
+    flex: none;
+    min-inline-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
+  }
+  a[aria-current='page'] .num {
+    color: inherit;
+  }
+</style>

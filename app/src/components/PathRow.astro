@@ -1,0 +1,47 @@
+---
+import DoneMark from '@/components/ui/DoneMark.astro';
+
+interface Props {
+  number: number;
+  title: string;
+  href: string;
+  done?: boolean;
+}
+const { number, title, href, done = false } = Astro.props;
+---
+
+<li class="path-row">
+  <a {href}>
+    <span class="num">{number}</span>
+    <span class="title">{title}</span>
+    {done && <DoneMark />}
+  </a>
+</li>
+
+<style>
+  .path-row a {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    min-block-size: var(--control-h);
+    padding: 0.5rem 0.5rem;
+    border-block-end: 1px solid var(--rule);
+    font-family: var(--font-hanken);
+    font-size: 1rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+  .path-row a:hover {
+    background: var(--accent-wash);
+  }
+  .title {
+    flex: 1;
+  }
+  .num {
+    flex: none;
+    min-inline-size: 2rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+import PathRow from '@/components/PathRow.astro';
+import ProgressSummary from '@/components/ProgressSummary.astro';
+import Button from '@/components/ui/Button.astro';
+import Shell from '@/layouts/Shell.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+import { summarize } from '@/lib/progress';
+import { EXERCISES_HREF } from '@/lib/study-path';
+
+const { path, index } = await loadStudyPath();
+const summary = summarize(path, index);
+const first = path.topics[0];
+const studyGuide = path.topics.find((t) => t.kind === 'study-guide');
+---
+
+<Shell title="System Design Study" runningHead="System Design Study" nav={path.nav}>
+  <h1>System Design Study</h1>
+  {first ? (
+    <>
+      <p>
+        {path.topics.length} topics in the order the primer recommends. Read them top to bottom.
+      </p>
+      <p>
+        <Button variant="primary" href={first.href}>
+          Start
+        </Button>
+      </p>
+      <ProgressSummary {...summary} />
+      {studyGuide && (
+        <p>
+          Short on time? See <a href={studyGuide.href}>the study guide</a>.
+        </p>
+      )}
+      {path.topicGroups.map((group) => (
+        <section>
+          <h2 class="running-head group-label">{group.label}</h2>
+          <ol class="path-list">
+            {group.items.map((t) => (
+              <PathRow number={t.number} title={t.title} href={t.href} done={t.done} />
+            ))}
+          </ol>
+        </section>
+      ))}
+    </>
+  ) : (
+    <p>No study content found. Check that README.md is in the repository root.</p>
+  )}
+  <p>
+    <a href={EXERCISES_HREF}>Practice with the exercises</a>
+  </p>
+</Shell>
+
+<style>
+  .path-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--rule);
+  }
+  .group-label {
+    margin: 2rem 0 0.5rem;
+    color: var(--ink-faint);
+    font-size: 0.8125rem;
+  }
+</style>

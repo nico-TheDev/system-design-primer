@@ -1,0 +1,36 @@
+---
+import PathRow from '@/components/PathRow.astro';
+import Shell from '@/layouts/Shell.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+
+const { path } = await loadStudyPath();
+---
+
+<Shell title="Exercises · System Design Study" runningHead="Exercises" nav={path.nav}>
+  <h1>Exercises</h1>
+  {path.exerciseGroups.length === 0 && <p>No exercises found. Check the solutions folder.</p>}
+  {path.exerciseGroups.map((group) => (
+    <section>
+      <h2 class="running-head group-label">{group.label}</h2>
+      <ol class="path-list">
+        {group.items.map((e) => (
+          <PathRow number={e.number} title={e.title} href={e.href} done={e.done} />
+        ))}
+      </ol>
+    </section>
+  ))}
+</Shell>
+
+<style>
+  .path-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--rule);
+  }
+  .group-label {
+    margin: 2rem 0 0.5rem;
+    color: var(--ink-faint);
+    font-size: 0.8125rem;
+  }
+</style>
