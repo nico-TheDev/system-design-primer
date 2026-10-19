@@ -1,0 +1,13 @@
+---
+import { Code } from 'astro:components';
+import type { ComponentProps } from 'astro/types';
+import { shikiConfig } from '@/lib/shiki';
+
+interface Props {
+  code: string;
+  lang: ComponentProps<typeof Code>['lang'];
+}
+const { code, lang } = Astro.props;
+---
+
+<Code code={code} lang={lang} themes={shikiConfig.themes} defaultColor={false} wrap={false} />

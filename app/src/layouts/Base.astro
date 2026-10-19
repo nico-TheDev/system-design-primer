@@ -1,0 +1,56 @@
+---
+import { Font } from 'astro:assets';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <Font cssVariable="--font-literata" preload />
+    <Font cssVariable="--font-hanken" preload />
+    <Font cssVariable="--font-jetbrains" />
+    {/* Inline so the theme is set before first paint. Only exactly light or dark sets data-theme. */}
+    <script is:inline>
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {
+        /* localStorage blocked: fall back to System */
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 0.9rem;
+    background: var(--paper-raised);
+    color: var(--ink);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    transform: translateY(-300%);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+</style>

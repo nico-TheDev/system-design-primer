@@ -1,0 +1,68 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import IconButton from '@/components/ui/IconButton.astro';
+
+interface Props {
+  id: string;
+  title: string;
+}
+const { id, title } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<!-- Open it with a button that has commandfor={id} and command="show-modal". No script. -->
+<dialog id={id} class="dialog" aria-labelledby={titleId}>
+  <div class="dialog-head">
+    <h2 id={titleId}>{title}</h2>
+    <IconButton aria-label="Close" commandfor={id} command="close">
+      <Icon name="close" />
+    </IconButton>
+  </div>
+  <div class="dialog-body">
+    <slot />
+  </div>
+</dialog>
+
+<style is:global>
+  .dialog {
+    inline-size: min(32rem, calc(100vw - 2rem));
+    padding: 1rem 1.25rem 1.25rem;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-pop);
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    opacity: 0;
+    transition:
+      opacity var(--duration-fast) var(--ease),
+      display var(--duration-fast) allow-discrete,
+      overlay var(--duration-fast) allow-discrete;
+  }
+  .dialog[open] {
+    opacity: 1;
+  }
+  @starting-style {
+    .dialog[open] {
+      opacity: 0;
+    }
+  }
+  .dialog::backdrop {
+    background: var(--scrim);
+  }
+  .dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .dialog-head h2 {
+    margin: 0;
+    font-family: var(--font-literata);
+    font-size: 1.3125rem;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720" height="260" role="img" aria-label="A client asks the application, which checks the cache first and falls back to the database">
+  <rect width="720" height="260" fill="#fdfcf8"/>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#1f1d1a" stroke="#1f1d1a" stroke-width="1.5">
+    <rect x="30" y="100" width="130" height="60" fill="none"/>
+    <text x="95" y="135" text-anchor="middle" stroke="none">Client</text>
+    <rect x="270" y="100" width="150" height="60" fill="none"/>
+    <text x="345" y="135" text-anchor="middle" stroke="none">Application</text>
+    <rect x="540" y="30" width="150" height="60" fill="none"/>
+    <text x="615" y="65" text-anchor="middle" stroke="none">Cache</text>
+    <rect x="540" y="170" width="150" height="60" fill="none"/>
+    <text x="615" y="205" text-anchor="middle" stroke="none">Database</text>
+    <path d="M160 130H270M420 115L540 70M420 145L540 190" fill="none"/>
+    <text x="215" y="120" text-anchor="middle" stroke="none" font-size="13">1 request</text>
+    <text x="490" y="78" text-anchor="middle" stroke="none" font-size="13">2 lookup</text>
+    <text x="490" y="182" text-anchor="middle" stroke="none" font-size="13">3 on miss</text>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+/* Typeset Reference tokens (spec 0004). light-dark() picks the value from color-scheme,
+   so the System, Light and Dark choices need no duplicated values. */
+:root {
+  color-scheme: light dark;
+
+  --paper: light-dark(#f5f2ea, #1b1a18);
+  --paper-raised: light-dark(#fbf9f4, #242320);
+  --plate: light-dark(#fdfcf8, #f7f5ee);
+  --ink: light-dark(#1f1d1a, #e9e5da);
+  --ink-soft: light-dark(#4a463f, #bdb8aa);
+  --ink-faint: light-dark(#6b665c, #9a9588);
+  --rule: light-dark(#d9d3c6, #34322e);
+  --rule-strong: light-dark(#8f897b, #7a7569);
+  --scrim: light-dark(rgb(20 18 16 / 0.5), rgb(0 0 0 / 0.6));
+  --accent: light-dark(#2d4a8a, #8fa9e6);
+  --accent-wash: light-dark(#e3e8f3, #262c3d);
+  --caution: light-dark(#8a4b12, #d9a05b);
+  --done: light-dark(#2f6b4a, #7fbf9a);
+  /* Text on the primary button fill: paper in light, the dark paper in dark. */
+  --on-accent: light-dark(#fbf9f4, #1b1a18);
+  --shadow-color: light-dark(rgb(20 18 16 / 0.16), rgb(0 0 0 / 0.5));
+
+  --measure: 66ch;
+  --sidebar-w: 16rem;
+  --margin-w: 14rem;
+  --gutter: clamp(1rem, 3vw, 2rem);
+  --header-h: 3.25rem;
+  --control-h: 2.5rem;
+
+  --duration-fast: 120ms;
+  --ease: ease-out;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+  }
+}

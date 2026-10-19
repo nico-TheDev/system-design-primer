@@ -1,0 +1,27 @@
+---
+// Small local icon set. Strokes use currentColor; icons are decorative, the control carries the name.
+interface Props {
+  name: 'menu' | 'close' | 'check';
+  size?: number;
+}
+const { name, size = 20 } = Astro.props;
+const paths = {
+  menu: 'M3 6h14M3 10h14M3 14h14',
+  close: 'M5 5l10 10M15 5L5 15',
+  check: 'M4 10.5l4 4 8-9',
+} as const;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 20 20"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="square"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={paths[name]}></path>
+</svg>

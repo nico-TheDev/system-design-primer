@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'button'>, 'aria-label'> {
+  'aria-label': string;
+}
+const { class: className, ...rest } = Astro.props;
+---
+
+<button type="button" class:list={['icon-button', className]} {...rest}>
+  <slot />
+</button>
+
+<style>
+  .icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--control-h);
+    block-size: var(--control-h);
+    padding: 0;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+  .icon-button:hover {
+    background: var(--accent-wash);
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+import Shell from '@/layouts/Shell.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+import { Content, getHeadings } from '@/fixtures/sample-article.md';
+
+const headings = getHeadings();
+const { path } = await loadStudyPath();
+const { nav } = path;
+---
+
+<Shell
+  title="Designing a read heavy cache layer"
+  runningHead="1 · Caching"
+  nav={nav}
+  headings={headings}
+>
+  <Content />
+</Shell>

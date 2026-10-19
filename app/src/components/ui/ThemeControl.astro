@@ -1,0 +1,93 @@
+---
+const choices = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+] as const;
+---
+
+<div class="theme-control" role="group" aria-label="Theme">
+  {choices.map((c) => (
+    <button type="button" data-theme-choice={c.value} aria-pressed={c.value === 'system'}>
+      {c.label}
+    </button>
+  ))}
+</div>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');
+
+  // localStorage can be blocked or hold anything; only light and dark count.
+  const read = (): 'system' | 'light' | 'dark' => {
+    try {
+      const v = localStorage.getItem('theme');
+      return v === 'light' || v === 'dark' ? v : 'system';
+    } catch {
+      return 'system';
+    }
+  };
+
+  const show = (choice: string) => {
+    for (const b of buttons)
+      b.setAttribute('aria-pressed', String(b.dataset.themeChoice === choice));
+  };
+
+  show(read());
+
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      const choice = b.dataset.themeChoice ?? 'system';
+      if (choice === 'light' || choice === 'dark') root.dataset.theme = choice;
+      else delete root.dataset.theme;
+      try {
+        if (choice === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', choice);
+      } catch {
+        // Blocked storage: the choice still applies until reload.
+      }
+      show(choice);
+    });
+  }
+</script>
+
+<style>
+  .theme-control {
+    display: inline-flex;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  button {
+    block-size: calc(var(--control-h) - 2px);
+    padding-inline: 0.75rem;
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+  button + button {
+    border-inline-start: 1px solid var(--rule);
+  }
+  button:hover {
+    background: var(--accent-wash);
+  }
+  button[aria-pressed='true'] {
+    background: var(--accent-wash);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  /* Inset focus ring so the group's overflow clip does not hide it. */
+  button:focus-visible {
+    outline-offset: -3px;
+  }
+  @media (max-width: 40rem) {
+    button {
+      padding-inline: 0.5rem;
+    }
+  }
+</style>

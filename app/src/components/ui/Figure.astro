@@ -1,0 +1,19 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  // From the markdown image title. No caption means no number.
+  caption?: string;
+}
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="figure" data-numbered={caption ? '' : undefined}>
+  <div class="figure-plate">
+    {typeof src === 'string' ? <img src={src} alt={alt} /> : <Image src={src} alt={alt} />}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

@@ -1,0 +1,305 @@
+---
+import Base from '@/layouts/Base.astro';
+import ContentsNav from '@/components/ContentsNav.astro';
+import Icon from '@/components/ui/Icon.astro';
+import IconButton from '@/components/ui/IconButton.astro';
+import ThemeControl from '@/components/ui/ThemeControl.astro';
+import { onThisPage } from '@/lib/nav';
+import type { Heading, NavSection } from '@/lib/nav';
+
+interface Props {
+  title: string;
+  runningHead: string;
+  nav: readonly NavSection[];
+  headings?: readonly Heading[];
+}
+const { title, runningHead, nav, headings = [] } = Astro.props;
+const otp = onThisPage(headings);
+const currentPath = Astro.url.pathname;
+---
+
+<Base title={title}>
+  <header class="shell-header">
+    <IconButton
+      id="drawer-button"
+      class="drawer-button"
+      aria-label="Open contents"
+      aria-controls="contents-drawer"
+      aria-haspopup="dialog"
+    >
+      <Icon name="menu" />
+    </IconButton>
+    <p class="running-head head-title">{runningHead}</p>
+    <ThemeControl />
+  </header>
+
+  <div class:list={['shell-grid', { 'has-otp': otp.length > 0 }]}>
+    <aside class="sidebar" aria-label="Contents">
+      <ContentsNav sections={nav} currentPath={currentPath} label="Contents" />
+    </aside>
+
+    <main id="main" tabindex="-1">
+      <div class="article-wrap">
+        <div class="article">
+          {otp.length > 0 && (
+            <>
+              <details class="otp-inline">
+                <summary>On this page</summary>
+                <ol>
+                  {otp.map((h) => (
+                    <li class:list={{ sub: h.depth === 3 }}>
+                      <a href={`#${h.slug}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </>
+          )}
+          <div class="prose-ref">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {otp.length > 0 && (
+      <nav class="otp-margin" aria-label="On this page">
+        <p class="running-head">On this page</p>
+        <ol>
+          {otp.map((h) => (
+            <li class:list={{ sub: h.depth === 3 }}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+  </div>
+
+  <dialog id="contents-drawer" class="drawer" aria-label="Contents">
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <p class="running-head">Contents</p>
+        <IconButton id="drawer-close" aria-label="Close contents">
+          <Icon name="close" />
+        </IconButton>
+      </div>
+      <ContentsNav sections={nav} currentPath={currentPath} label="Contents (drawer)" />
+    </div>
+  </dialog>
+</Base>
+
+<script>
+  const drawer = document.querySelector<HTMLDialogElement>('#contents-drawer');
+  const openButton = document.querySelector<HTMLButtonElement>('#drawer-button');
+  const closeButton = document.querySelector<HTMLButtonElement>('#drawer-close');
+  const wide = window.matchMedia('(min-width: 64rem)');
+
+  if (drawer && openButton) {
+    // The browser returns focus to the opener when a modal dialog closes.
+    openButton.addEventListener('click', () => drawer.showModal());
+    closeButton?.addEventListener('click', () => drawer.close());
+    // A click on the backdrop lands on the dialog itself; the panel fills the rest.
+    drawer.addEventListener('click', (e) => {
+      if (e.target === drawer) drawer.close();
+      else if (e.target instanceof Element && e.target.closest('a')) drawer.close();
+    });
+    wide.addEventListener('change', (e) => {
+      if (e.matches && drawer.open) drawer.close();
+    });
+  }
+</script>
+
+<style is:global>
+  .shell-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    block-size: var(--header-h);
+    padding-inline: var(--gutter);
+    background: var(--paper);
+    border-block-end: 1px solid var(--rule);
+  }
+  .head-title {
+    flex: 1;
+    margin: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+  .shell-grid {
+    display: block;
+  }
+  .sidebar {
+    display: none;
+  }
+  main {
+    min-inline-size: 0;
+    padding: calc(var(--gutter) * 1.5) var(--gutter) 6rem;
+  }
+  main:focus {
+    outline: none;
+  }
+  /* The reading font lives on the wrap so 66ch means the same width in both. */
+  .article-wrap {
+    margin-inline: auto;
+    max-inline-size: var(--measure);
+    font-family: var(--font-literata);
+    font-size: 1.125rem;
+  }
+  .article {
+    max-inline-size: var(--measure);
+  }
+
+  /* On this page: a disclosure below xl, a margin list at xl. */
+  .otp-inline {
+    margin-block-end: 1.5rem;
+    border-block: 1px solid var(--rule);
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+  }
+  .otp-inline summary {
+    padding-block: 0.6rem;
+    min-block-size: var(--control-h);
+    box-sizing: border-box;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .otp-inline ol {
+    margin: 0 0 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  .otp-margin {
+    display: none;
+  }
+  .otp-inline li a,
+  .otp-margin li a {
+    display: block;
+    padding-block: 0.25rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .otp-inline li a:hover,
+  .otp-margin li a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  li.sub {
+    padding-inline-start: 1rem;
+  }
+
+  .drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline: 0 auto;
+    margin: 0;
+    padding: 0;
+    inline-size: min(var(--sidebar-w), 85vw);
+    block-size: 100dvh;
+    max-block-size: none;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 0;
+    border-inline-end: 1px solid var(--rule-strong);
+    opacity: 0;
+    transition:
+      opacity var(--duration-fast) var(--ease),
+      display var(--duration-fast) allow-discrete,
+      overlay var(--duration-fast) allow-discrete;
+  }
+  .drawer[open] {
+    opacity: 1;
+  }
+  @starting-style {
+    .drawer[open] {
+      opacity: 0;
+    }
+  }
+  .drawer::backdrop {
+    background: var(--scrim);
+  }
+  .drawer-panel {
+    block-size: 100%;
+    overflow-y: auto;
+    padding: 0 0.5rem 2rem;
+    box-sizing: border-box;
+  }
+  .drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: var(--header-h);
+    padding-inline: 0.5rem;
+  }
+  .drawer-head p {
+    margin: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .shell-header .drawer-button {
+      display: none;
+    }
+    .shell-grid {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    }
+    .sidebar {
+      display: block;
+      position: sticky;
+      top: var(--header-h);
+      align-self: start;
+      block-size: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 1rem 0.5rem 2rem;
+      background: var(--paper-raised);
+      border-inline-end: 1px solid var(--rule);
+    }
+  }
+
+  /* On this page gets its own sticky column from xl. */
+  @media (min-width: 80rem) {
+    .shell-grid.has-otp {
+      grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--margin-w);
+    }
+    .otp-inline {
+      display: none;
+    }
+    .otp-margin {
+      display: block;
+      position: sticky;
+      top: var(--header-h);
+      align-self: start;
+      max-block-size: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: calc(var(--gutter) * 1.5) var(--gutter) 2rem 0;
+      font-family: var(--font-hanken);
+      font-size: 0.9375rem;
+      line-height: 1.4;
+    }
+    .otp-margin .running-head {
+      margin: 0 0 0.4rem;
+      color: var(--ink-faint);
+    }
+    .otp-margin ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  /* Margin notes need room beside the article as well, so they wait for 2xl. */
+  @media (min-width: 96rem) {
+    .article-wrap {
+      max-inline-size: calc(var(--measure) + var(--margin-w) + var(--gutter));
+    }
+  }
+</style>

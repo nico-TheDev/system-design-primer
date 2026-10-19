@@ -1,0 +1,292 @@
+---
+import Shell from '@/layouts/Shell.astro';
+import Button from '@/components/ui/Button.astro';
+import Callout from '@/components/ui/Callout.astro';
+import Checkbox from '@/components/ui/Checkbox.astro';
+import CodeBlock from '@/components/ui/CodeBlock.astro';
+import Dialog from '@/components/ui/Dialog.astro';
+import Disclosure from '@/components/ui/Disclosure.astro';
+import Figure from '@/components/ui/Figure.astro';
+import Icon from '@/components/ui/Icon.astro';
+import IconButton from '@/components/ui/IconButton.astro';
+import MarginNote from '@/components/ui/MarginNote.astro';
+import TableWrap from '@/components/ui/TableWrap.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+import type { Heading } from '@/lib/nav';
+
+const colors = [
+  ['paper', 'Page background'],
+  ['paper-raised', 'Sidebar, code, callouts, dialog'],
+  ['plate', 'Diagram frame, light in both themes'],
+  ['ink', 'Body text and headings'],
+  ['ink-soft', 'Secondary text'],
+  ['ink-faint', 'Captions and meta'],
+  ['rule', 'Hairlines, decorative only'],
+  ['rule-strong', 'Control borders'],
+  ['accent', 'Links, focus, current location'],
+  ['accent-wash', 'Hover, current row'],
+  ['caution', 'Caution callout, warnings'],
+  ['done', 'Completed marks'],
+] as const;
+
+const headings: readonly Heading[] = [
+  { depth: 2, slug: 'color', text: 'Color' },
+  { depth: 2, slug: 'type', text: 'Type' },
+  { depth: 2, slug: 'components', text: 'Components' },
+  { depth: 3, slug: 'buttons', text: 'Buttons' },
+  { depth: 3, slug: 'reading', text: 'Reading elements' },
+  { depth: 3, slug: 'overlays', text: 'Disclosure and dialog' },
+];
+
+const sampleCode = `def get_user(user_id: str) -> User:
+    cached = cache.get(f"user:{user_id}")  # a deliberately long line so the block has to scroll sideways inside itself, not the page
+    return cached or db.fetch_user(user_id)`;
+const { path } = await loadStudyPath();
+const { nav } = path;
+---
+
+<Shell title="Design" runningHead="Design system" nav={nav} headings={headings}>
+  <h1>Design system</h1>
+  <p>
+    Every token and base component, drawn twice: once forced light and once forced dark, so you can
+    compare them without switching the theme. The page follows the same rules as the rest of the
+    app.
+  </p>
+
+  <h2 id="color">Color</h2>
+  <div class="pair">
+    {['light', 'dark'].map((theme) => (
+      <section class="swatch-panel" data-theme={theme} aria-label={`${theme} colors`}>
+        <p class="running-head">{theme}</p>
+        <ul class="swatches">
+          {colors.map(([name, use]) => (
+            <li>
+              <span class="chip" style={`background: var(--${name})`} aria-hidden="true" />
+              <span>
+                <strong>{name}</strong>
+                <br />
+                {use}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <h2 id="type">Type</h2>
+  <div class="pair">
+    {['light', 'dark'].map((theme) => (
+      <section class="swatch-panel" data-theme={theme} aria-label={`${theme} type`}>
+        <p class="running-head">Running head, table header</p>
+        <p class="t-h3">Literata 600, heading three</p>
+        <p class="t-body">
+          Reading body in Literata, set at eighteen pixels on a 1.65 line height.
+        </p>
+        <p class="t-ui">Interface text in Hanken Grotesk for navigation, buttons, and labels.</p>
+        <p class="t-code">
+          JetBrains Mono for code: <span>const total = 1_234;</span>
+        </p>
+      </section>
+    ))}
+  </div>
+
+  <h2 id="components">Components</h2>
+  <h3 id="buttons">Buttons</h3>
+  <div class="pair">
+    {['light', 'dark'].map((theme) => (
+      <section class="swatch-panel stack" data-theme={theme} aria-label={`${theme} buttons`}>
+        <div class="row">
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="secondary" disabled>
+            Disabled
+          </Button>
+        </div>
+        <div class="row">
+          <IconButton aria-label="Open contents">
+            <Icon name="menu" />
+          </IconButton>
+          <IconButton aria-label="Close">
+            <Icon name="close" />
+          </IconButton>
+          <Checkbox id={`check-${theme}`} label="Mark as read" />
+          <Checkbox id={`check-done-${theme}`} label="Done" checked />
+        </div>
+        <p>
+          A <a href="/sample">link inside text</a> uses the accent with an underline.
+        </p>
+      </section>
+    ))}
+  </div>
+
+  <h3 id="reading">Reading elements</h3>
+  <div class="pair">
+    {['light', 'dark'].map((theme) => (
+      <section
+        class="swatch-panel prose-ref"
+        data-theme={theme}
+        aria-label={`${theme} reading elements`}
+      >
+        <Callout type="note">
+          <p>A note points at something worth keeping.</p>
+        </Callout>
+        <Callout type="caution">
+          <p>A caution names a trap. The label word carries the meaning, not the color.</p>
+        </Callout>
+        <Figure
+          src="/fixtures/cache-aside.svg"
+          alt="A client, an application, a cache and a database"
+          caption="The cache aside pattern."
+        />
+        <TableWrap label={`Sample table, ${theme}`}>
+          <table>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th class="num">Latency</th>
+                <th class="num">Hit rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Process</td>
+                <td class="num">100 ns</td>
+                <td class="num">62%</td>
+              </tr>
+              <tr>
+                <td>Shared cache</td>
+                <td class="num">0.5 ms</td>
+                <td class="num">91%</td>
+              </tr>
+              <tr>
+                <td>Database</td>
+                <td class="num">2 ms</td>
+                <td class="num">100%</td>
+              </tr>
+            </tbody>
+          </table>
+        </TableWrap>
+        <CodeBlock code={sampleCode} lang="python" />
+        <p>
+          Inline <code>cache.get(key)</code> sits in running text.
+        </p>
+        <MarginNote>A margin note: sans text with a short hairline tick.</MarginNote>
+      </section>
+    ))}
+  </div>
+
+  <h3 id="overlays">Disclosure and dialog</h3>
+  <div class="pair">
+    {['light', 'dark'].map((theme) => (
+      <section class="swatch-panel stack" data-theme={theme} aria-label={`${theme} overlays`}>
+        <Disclosure summary="What is a disclosure?">
+          <p>Native details and summary. The keyboard works with no script.</p>
+        </Disclosure>
+        <div class="row">
+          <Button variant="secondary" commandfor={`dialog-${theme}`} command="show-modal">
+            Open dialog
+          </Button>
+        </div>
+        <Dialog id={`dialog-${theme}`} title="Confirm">
+          <p>
+            A modal dialog traps focus, closes on Escape, and returns focus to the button that
+            opened it.
+          </p>
+          <div class="row">
+            <Button variant="primary" commandfor={`dialog-${theme}`} command="close">
+              Done
+            </Button>
+          </div>
+        </Dialog>
+      </section>
+    ))}
+  </div>
+</Shell>
+
+<style is:global>
+  .pair {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    margin-block: 1rem;
+  }
+  /* Each panel forces its own theme through color-scheme, so both show at once. */
+  .swatch-panel {
+    min-inline-size: 0;
+    padding: 1rem;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  .swatch-panel[data-theme='light'] {
+    color-scheme: light;
+  }
+  .swatch-panel[data-theme='dark'] {
+    color-scheme: dark;
+  }
+  .swatch-panel.prose-ref {
+    font-size: 1.125rem;
+  }
+  .swatch-panel > .running-head {
+    margin: 0 0 0.75rem;
+    color: var(--ink-faint);
+  }
+  .swatches {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .swatches li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin: 0;
+  }
+  .chip {
+    flex: none;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+  }
+  .t-h3 {
+    font-family: var(--font-literata);
+    font-size: 1.3125rem;
+    line-height: 1.3;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .t-body {
+    font-family: var(--font-literata);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    margin: 0 0 0.5rem;
+  }
+  .t-ui {
+    margin: 0 0 0.5rem;
+  }
+  .t-code {
+    font-family: var(--font-jetbrains);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .stack {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+</style>

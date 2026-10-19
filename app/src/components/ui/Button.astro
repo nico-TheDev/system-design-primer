@@ -1,0 +1,70 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = (HTMLAttributes<'button'> | HTMLAttributes<'a'>) & {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  href?: string;
+};
+const { variant = 'secondary', href, class: className, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  {...rest}
+  href={href}
+  type={href ? undefined : ((rest as { type?: 'button' | 'submit' | 'reset' }).type ?? 'button')}
+  class:list={['btn', `btn-${variant}`, className]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    block-size: var(--control-h);
+    padding-inline: 1rem;
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn-primary:hover {
+    background: color-mix(in oklab, var(--accent), var(--ink) 18%);
+  }
+  .btn-secondary {
+    color: var(--ink);
+    border-color: var(--rule-strong);
+  }
+  .btn-secondary:hover {
+    background: var(--accent-wash);
+  }
+  .btn-ghost {
+    color: var(--ink);
+  }
+  .btn-ghost:hover {
+    background: var(--accent-wash);
+  }
+  .btn[disabled],
+  .btn[aria-disabled='true'] {
+    color: var(--ink-faint);
+    cursor: not-allowed;
+  }
+  .btn-primary[disabled] {
+    background: var(--rule);
+    color: var(--ink-faint);
+  }
+</style>

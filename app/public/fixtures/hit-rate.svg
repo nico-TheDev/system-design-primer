@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" width="720" height="240" role="img" aria-label="Average latency falls as the cache hit rate rises">
+  <rect width="720" height="240" fill="#fdfcf8"/>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1f1d1a" stroke="#1f1d1a" stroke-width="1.5">
+    <path d="M70 20V190H680" fill="none"/>
+    <path d="M70 40C200 60 340 120 520 165S660 185 680 187" fill="none" stroke="#2d4a8a" stroke-width="2.5"/>
+    <text x="375" y="225" text-anchor="middle" stroke="none">Cache hit rate</text>
+    <text x="20" y="110" stroke="none" transform="rotate(-90 20 110)" text-anchor="middle">Average latency</text>
+    <text x="70" y="208" text-anchor="middle" stroke="none">0%</text>
+    <text x="680" y="208" text-anchor="middle" stroke="none">100%</text>
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+---
+import Shell from '@/layouts/Shell.astro';
+import Button from '@/components/ui/Button.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+
+const { path } = await loadStudyPath();
+const { nav } = path;
+Astro.response.status = 404;
+---
+
+<Shell title="Page not found · System Design Study" runningHead="Not found" nav={nav}>
+  <h1>Page not found</h1>
+  <p>There is no topic or exercise at this address.</p>
+  <p>
+    <Button variant="primary" href="/">
+      Back to the study path
+    </Button>
+  </p>
+</Shell>

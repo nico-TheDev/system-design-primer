@@ -1,0 +1,325 @@
+/* The article stylesheet (spec 0004). Everything reads from tokens. */
+.prose-ref {
+  font-family: var(--font-literata);
+  font-size: 1.125rem;
+  line-height: 1.65;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  max-width: var(--measure);
+  color: var(--ink);
+  overflow-wrap: break-word;
+  counter-reset: figure;
+}
+
+.prose-ref > :first-child {
+  margin-top: 0;
+}
+
+.prose-ref :is(h1, h2, h3, h4) {
+  font-family: var(--font-literata);
+  font-weight: 600;
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+  text-wrap: balance;
+}
+
+.prose-ref h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.6em;
+}
+
+.prose-ref h2 {
+  font-size: 1.625rem;
+  line-height: 1.25;
+  margin: 2.25em 0 0.6em;
+}
+
+.prose-ref h3 {
+  font-size: 1.3125rem;
+  line-height: 1.3;
+  margin: 1.75em 0 0.5em;
+}
+
+.prose-ref h4 {
+  font-size: 1.125rem;
+  line-height: 1.4;
+  margin: 1.5em 0 0.4em;
+}
+
+.prose-ref p {
+  margin: 1.1em 0;
+}
+
+.prose-ref :is(ul, ol) {
+  margin: 1.1em 0;
+  padding-inline-start: 1.5em;
+}
+
+.prose-ref li {
+  margin: 0.35em 0;
+}
+
+.prose-ref li > :is(ul, ol) {
+  margin: 0.35em 0;
+  padding-inline-start: 1.25em;
+}
+
+.prose-ref blockquote {
+  margin: 1.4em 0;
+  padding-inline-start: 1em;
+  border-inline-start: 2px solid var(--rule-strong);
+  color: var(--ink-soft);
+}
+
+.prose-ref blockquote > :first-child {
+  margin-top: 0;
+}
+
+.prose-ref blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.prose-ref hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 2.25em 0;
+}
+
+.prose-ref a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+.prose-ref a:hover {
+  background: var(--accent-wash);
+}
+
+.prose-ref a:visited {
+  color: var(--accent);
+}
+
+.prose-ref strong {
+  font-weight: 600;
+}
+
+.prose-ref img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.4em 0;
+}
+
+.prose-ref :not(pre) > code {
+  font-family: var(--font-jetbrains);
+  font-size: 0.9em;
+  padding: 0.05em 0.3em;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+
+/* Tables: rules between rows only. Bare markdown tables scroll in place; TableWrap adds a labelled region. */
+.prose-ref table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.prose-ref .table-wrap table {
+  display: table;
+}
+
+.prose-ref .table-wrap {
+  margin: 1.4em 0;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.prose-ref table {
+  border-collapse: collapse;
+  inline-size: max-content;
+  min-inline-size: 100%;
+  font-family: var(--font-hanken);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.prose-ref :is(th, td) {
+  padding: 0.55rem 0.9rem 0.55rem 0;
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--rule);
+}
+
+.prose-ref th {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  border-block-end-color: var(--rule-strong);
+  white-space: nowrap;
+}
+
+.prose-ref td {
+  font-variant-numeric: tabular-nums;
+}
+
+.prose-ref :is(th, td)[align='right'],
+.prose-ref :is(th, td).num {
+  text-align: end;
+}
+
+/* Code blocks. Shiki writes both theme colors as variables (defaultColor is false). */
+.prose-ref pre {
+  margin: 1.4em 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  max-width: 100%;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-jetbrains);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  position: relative;
+}
+
+.prose-ref pre.astro-code,
+.prose-ref pre.astro-code span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+  background-color: transparent;
+}
+
+.prose-ref pre.astro-code {
+  background-color: var(--paper-raised);
+}
+
+.prose-ref pre code {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  overflow-wrap: normal;
+}
+
+/* The language label comes from the data-language attribute Astro writes on <pre>. */
+.prose-ref pre[data-language]::before {
+  content: attr(data-language);
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-hanken);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--ink-faint);
+}
+
+.prose-ref pre.astro-code > code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Figures: image on a light plate, numbered caption below a hairline. */
+.prose-ref .figure {
+  margin: 1.8em 0;
+}
+
+.prose-ref .figure-plate {
+  background: var(--plate);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+.prose-ref .figure-plate img {
+  margin: 0 auto;
+}
+
+.prose-ref .figure figcaption {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-hanken);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ink-faint);
+}
+
+.prose-ref .figure[data-numbered] {
+  counter-increment: figure;
+}
+
+.prose-ref .figure[data-numbered] figcaption::before {
+  content: 'Figure ' counter(figure) '. ';
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Callouts and margin notes. They live here because markdown can write them as raw HTML. */
+.callout {
+  margin: 1.4em 0;
+  padding: 0.75rem 1rem;
+  background: var(--paper-raised);
+  border-inline-start: 2px solid var(--callout-color);
+  font-family: var(--font-hanken);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.callout-note {
+  --callout-color: var(--accent);
+}
+.callout-caution {
+  --callout-color: var(--caution);
+}
+.callout-label {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: var(--callout-color);
+}
+.callout-body > :first-child {
+  margin-top: 0;
+}
+.callout-body > :last-child {
+  margin-bottom: 0;
+}
+.callout-body p {
+  margin: 0.5rem 0;
+}
+
+.margin-note {
+  margin: 1rem 0 1rem 1rem;
+  font-family: var(--font-hanken);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.margin-note::before {
+  content: '';
+  display: block;
+  inline-size: 1.25rem;
+  margin-block-end: 0.4rem;
+  border-block-start: 1px solid var(--rule-strong);
+}
+.margin-note > :first-child {
+  margin-top: 0;
+}
+.margin-note > :last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 96rem) {
+  .margin-note {
+    float: right;
+    clear: right;
+    inline-size: var(--margin-w);
+    margin: 0.25rem calc(-1 * (var(--margin-w) + var(--gutter))) 1rem 0;
+  }
+}
