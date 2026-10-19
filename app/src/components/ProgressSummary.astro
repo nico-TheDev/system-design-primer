@@ -1,0 +1,62 @@
+---
+import type { Count } from '@/lib/progress';
+
+interface Props {
+  topics: Count;
+  exercises: Count;
+}
+const { topics, exercises } = Astro.props;
+const lines = [
+  { word: 'topics', count: topics },
+  { word: 'exercises', count: exercises },
+].filter((line) => line.count.total > 0);
+---
+
+{lines.length > 0 && (
+  <div class="summary">
+    {lines.map(({ word, count }) => (
+      <div class="line">
+        <label for={`progress-${word}`}>
+          {count.done} of {count.total} {word} done
+        </label>
+        <progress id={`progress-${word}`} value={count.done} max={count.total}></progress>
+      </div>
+    ))}
+  </div>
+)}
+
+<style>
+  .summary {
+    display: grid;
+    gap: 0.75rem;
+    margin-block: 1.5rem;
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+  }
+  .line {
+    display: grid;
+    gap: 0.3rem;
+    max-inline-size: 24rem;
+  }
+  label {
+    color: var(--ink-soft);
+  }
+  progress {
+    appearance: none;
+    inline-size: 100%;
+    block-size: 0.625rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    background: var(--paper-raised);
+    overflow: hidden;
+  }
+  progress::-webkit-progress-bar {
+    background: var(--paper-raised);
+  }
+  progress::-webkit-progress-value {
+    background: var(--done);
+  }
+  progress::-moz-progress-bar {
+    background: var(--done);
+  }
+</style>

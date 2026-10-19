@@ -1,0 +1,56 @@
+---
+import { actions } from 'astro:actions';
+import Button from '@/components/ui/Button.astro';
+import { formatDoneDate } from '@/lib/progress';
+
+interface Props {
+  kind: 'topic' | 'exercise';
+  id: string;
+  completedAt?: Date | undefined;
+}
+const { kind, id, completedAt } = Astro.props;
+const done = completedAt !== undefined;
+const label = `Mark ${kind} ${done ? 'not done' : 'done'}`;
+
+// Show the error only on the item the failed form was for.
+const result = Astro.getActionResult(actions.setProgress);
+const message = result?.error?.message;
+---
+
+<form method="POST" action={actions.setProgress} class="done-form">
+  <input type="hidden" name="kind" value={kind} />
+  <input type="hidden" name="id" value={id} />
+  <input type="hidden" name="done" value={done ? 'false' : 'true'} />
+  <Button type="submit" variant={done ? 'secondary' : 'primary'}>
+    {label}
+  </Button>
+  {done && <p class="when">Done on {formatDoneDate(completedAt)}</p>}
+  {message && (
+    <p role="alert" class="error">
+      {message}
+    </p>
+  )}
+</form>
+
+<style>
+  .done-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    margin-block-start: 3rem;
+    font-family: var(--font-hanken);
+  }
+  .when,
+  .error {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .when {
+    color: var(--ink-soft);
+  }
+  .error {
+    color: var(--caution);
+    font-weight: 500;
+  }
+</style>
