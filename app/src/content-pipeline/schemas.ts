@@ -1,5 +1,5 @@
 import { z } from 'astro/zod';
-import type { Exercise, Topic } from './types';
+import type { Card, Exercise, Topic } from './types';
 
 const tocHeading = z.object({ depth: z.number(), text: z.string(), anchor: z.string() });
 
@@ -29,3 +29,13 @@ export const exerciseSchema = z.object({
     }),
   ),
 }) satisfies z.ZodType<Exercise>;
+
+export const cardSchema = z.object({
+  id: z.string(),
+  deck: z.string(),
+  deckTitle: z.string(),
+  guid: z.string(),
+  order: z.number().int(),
+  title: z.string().min(1),
+  backHtml: z.string(),
+}) satisfies z.ZodType<Card>;

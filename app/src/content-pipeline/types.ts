@@ -69,6 +69,18 @@ export type Exercise = {
   readonly solution: readonly SolutionSection[];
 };
 
+export type Card = {
+  // `${deck}:${guid}`, never parsed: deck and guid always travel as separate fields.
+  readonly id: string;
+  readonly deck: string;
+  readonly deckTitle: string;
+  readonly guid: string;
+  readonly order: number;
+  readonly title: string;
+  // Cleaned by the allowlist in cards.ts; the only card HTML a page may render.
+  readonly backHtml: string;
+};
+
 export type Content = {
   readonly topics: readonly Topic[];
   readonly exercises: readonly Exercise[];

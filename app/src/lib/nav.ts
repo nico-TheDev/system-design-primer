@@ -3,6 +3,9 @@ export interface NavItem {
   readonly href: string;
   readonly number?: string;
   readonly done?: boolean;
+  readonly practiced?: boolean;
+  // A count with the text a screen reader hears instead of the bare number.
+  readonly badge?: { readonly count: number; readonly label: string };
 }
 
 export interface NavSection {

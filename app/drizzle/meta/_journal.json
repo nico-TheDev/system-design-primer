@@ -15,6 +15,20 @@
       "when": 1792409231294,
       "tag": "0001_tiny_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792412613756,
+      "tag": "0002_careless_sugar_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1792421596204,
+      "tag": "0003_parallel_blink",
+      "breakpoints": true
     }
   ]
 }

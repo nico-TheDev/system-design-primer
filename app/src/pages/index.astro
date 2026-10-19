@@ -3,11 +3,13 @@ import PathRow from '@/components/PathRow.astro';
 import ProgressSummary from '@/components/ProgressSummary.astro';
 import Button from '@/components/ui/Button.astro';
 import Shell from '@/layouts/Shell.astro';
+import { homeLine, FLASHCARDS_HREF } from '@/lib/flashcards';
 import { loadStudyPath } from '@/lib/load-study-path';
+import { summarizePracticed } from '@/lib/practice';
 import { summarize } from '@/lib/progress';
 import { EXERCISES_HREF } from '@/lib/study-path';
 
-const { path, index } = await loadStudyPath();
+const { path, index, flashcards } = await loadStudyPath();
 const summary = summarize(path, index);
 const first = path.topics[0];
 const studyGuide = path.topics.find((t) => t.kind === 'study-guide');
@@ -25,7 +27,12 @@ const studyGuide = path.topics.find((t) => t.kind === 'study-guide');
           Start
         </Button>
       </p>
-      <ProgressSummary {...summary} />
+      <ProgressSummary {...summary} practiced={summarizePracticed(path)} />
+      {flashcards.total > 0 && (
+        <p class="flashcards-line">
+          <a href={FLASHCARDS_HREF}>{homeLine(flashcards)}</a>
+        </p>
+      )}
       {studyGuide && (
         <p>
           Short on time? See <a href={studyGuide.href}>the study guide</a>.
@@ -51,6 +58,10 @@ const studyGuide = path.topics.find((t) => t.kind === 'study-guide');
 </Shell>
 
 <style>
+  .flashcards-line {
+    font-family: var(--font-hanken);
+    font-size: 0.9375rem;
+  }
   .path-list {
     margin: 0;
     padding: 0;

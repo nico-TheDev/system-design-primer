@@ -1,0 +1,58 @@
+---
+import { ReviewSession, type SessionCard } from '@/components/islands/ReviewSession';
+import Shell from '@/layouts/Shell.astro';
+import { nextDueAt } from '@/lib/flashcards';
+import { buildQueue } from '@/lib/flashcards-queue';
+import { previews } from '@/lib/flashcards-scheduler';
+import { loadFlashcards } from '@/lib/load-flashcards';
+import { loadStudyPath } from '@/lib/load-study-path';
+
+const now = Date.now();
+const deck = Astro.url.searchParams.get('deck') ?? undefined;
+const { path } = await loadStudyPath();
+const { cards, saved, standings, remaining } = await loadFlashcards(now);
+if (deck !== undefined && !cards.some((card) => card.deck === deck)) return Astro.rewrite('/404');
+
+const scope = standings.filter((card) => deck === undefined || card.deck === deck);
+const queue = buildQueue(scope, now, remaining);
+const inQueue = new Set(queue.map((card) => card.id));
+const byId = new Map(cards.map((card) => [card.id, card]));
+
+// The card data is the cleaned collection entry; the schedule is whatever was saved, or none for a new card.
+const session: readonly SessionCard[] = queue.flatMap((standing) => {
+  const card = byId.get(standing.id);
+  if (!card) return [];
+  const schedule = saved.get(card.id);
+  return [
+    {
+      id: card.id,
+      deck: card.deck,
+      guid: card.guid,
+      deckTitle: card.deckTitle,
+      title: card.title,
+      backHtml: card.backHtml,
+      order: card.order,
+      state: standing.state,
+      due: standing.due,
+      previews: previews(schedule, now),
+    },
+  ];
+});
+
+// When the first card outside this session comes back, for the done screen.
+const outside = standings.filter((card) => !inQueue.has(card.id));
+const nextDue = nextDueAt(outside, remaining, now);
+const title = deck
+  ? (cards.find((card) => card.deck === deck)?.deckTitle ?? 'Review')
+  : 'All decks';
+---
+
+<Shell
+  title={`Review ${title} · System Design Study`}
+  runningHead={`Flashcards · ${title}`}
+  nav={path.nav}
+>
+  <h1>{title}</h1>
+  {/* client:load because the keys must work from the first paint, with no scroll into view first. */}
+  <ReviewSession client:load cards={session} serverNow={now} nextDue={nextDue} />
+</Shell>

@@ -1,4 +1,5 @@
 import type { NavItem, NavSection } from '@/lib/nav';
+import { emptyPracticeIndex, type PracticeIndex } from '@/lib/practice';
 import { isDone, type DoneIndex } from '@/lib/progress';
 import type {
   Exercise,
@@ -26,7 +27,11 @@ type PathEntry<K extends string> = {
 };
 
 export type PathTopic = PathEntry<TopicKind>;
-export type PathExercise = PathEntry<ExerciseKind>;
+export type PathExercise = PathEntry<ExerciseKind> & {
+  // Finished practice attempts, and whether a session is open.
+  readonly practiced: number;
+  readonly practicing: boolean;
+};
 
 export type PathGroup<E> = {
   readonly label: string;
@@ -55,6 +60,8 @@ const EXERCISE_GROUPS: readonly (readonly [ExerciseKind, string])[] = [
 ];
 
 export const EXERCISES_HREF = '/exercises/';
+
+export const practiceHref = (id: string): string => `/exercises/${id}/practice/`;
 
 const byOrder = (a: { readonly order: number }, b: { readonly order: number }) => a.order - b.order;
 
@@ -102,10 +109,12 @@ const toNavItem = (entry: {
   href: string;
   number: number;
   done: boolean;
+  practiced?: number;
 }): NavItem => ({
   title: entry.title,
   href: entry.href,
   done: entry.done,
+  practiced: (entry.practiced ?? 0) > 0,
   number: String(entry.number),
 });
 
@@ -113,6 +122,7 @@ export const buildStudyPath = (
   topics: readonly Topic[],
   exercises: readonly Exercise[],
   doneIndex: DoneIndex = new Map(),
+  practiceIndex: PracticeIndex = emptyPracticeIndex,
 ): StudyPath => {
   const pathTopics = numbered(
     [...topics].sort(byOrder),
@@ -123,7 +133,11 @@ export const buildStudyPath = (
     [...exercises].sort(byOrder),
     (id) => `/exercises/${id}/`,
     (id) => isDone(doneIndex, 'exercise', id),
-  ) as readonly PathExercise[];
+  ).map((entry) => ({
+    ...entry,
+    practiced: practiceIndex.finished.get(entry.id) ?? 0,
+    practicing: practiceIndex.open.has(entry.id),
+  })) as readonly PathExercise[];
 
   // The last topic leads on to the exercises, which have no number of their own.
   const topicsWithEnd = pathTopics.map((topic, index) =>

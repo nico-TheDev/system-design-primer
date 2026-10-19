@@ -1,0 +1,99 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Shell from '@/layouts/Shell.astro';
+import { homeLine, reviewHref } from '@/lib/flashcards';
+import { loadFlashcards } from '@/lib/load-flashcards';
+import { loadStudyPath } from '@/lib/load-study-path';
+
+const { path } = await loadStudyPath();
+const { summary } = await loadFlashcards(Date.now());
+---
+
+<Shell title="Flashcards · System Design Study" runningHead="Flashcards" nav={path.nav}>
+  <h1>Flashcards</h1>
+
+  {summary.decks.length === 0 ? (
+    <p>No flashcard decks found. Check that the .apkg files are in resources/flash_cards.</p>
+  ) : (
+    <>
+      <p class="line">{homeLine(summary)}.</p>
+      {summary.waiting > 0 && (
+        <p>
+          <Button variant="primary" href={reviewHref()}>
+            Review all
+          </Button>
+        </p>
+      )}
+
+      <ul class="decks" aria-label="Decks">
+        {summary.decks.map((deck) => (
+          <li>
+            <div>
+              <h2>{deck.deckTitle}</h2>
+              <p>
+                {deck.total} cards · {deck.newAvailable} new today · {deck.dueNow} due now
+              </p>
+            </div>
+            {deck.newAvailable + deck.dueNow > 0 ? (
+              <a href={reviewHref(deck.deck)}>
+                Review<span class="sr-only"> {deck.deckTitle}</span>
+              </a>
+            ) : (
+              <span class="none">Nothing to review</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</Shell>
+
+<style>
+  .line {
+    font-family: var(--font-hanken);
+    color: var(--ink-soft);
+  }
+  .decks {
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--rule);
+    font-family: var(--font-hanken);
+  }
+  .decks li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0.5rem;
+    border-block-end: 1px solid var(--rule);
+  }
+  .decks h2 {
+    margin: 0;
+    font-family: var(--font-hanken);
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+  .decks p {
+    margin: 0.15rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .none {
+    color: var(--ink-faint);
+    font-size: 0.9375rem;
+  }
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

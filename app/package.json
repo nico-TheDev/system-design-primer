@@ -25,9 +25,12 @@
     "astro": "^7.4.0",
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.4",
+    "fflate": "^0.8.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "tailwindcss": "^4.3.3"
+    "sanitize-html": "^2.18.1",
+    "tailwindcss": "^4.3.3",
+    "ts-fsrs": "^5.4.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -36,6 +39,7 @@
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sanitize-html": "^2.16.2",
     "drizzle-kit": "^0.31.11",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",

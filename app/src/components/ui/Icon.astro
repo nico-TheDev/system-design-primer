@@ -1,7 +1,7 @@
 ---
 // Small local icon set. Strokes use currentColor; icons are decorative, the control carries the name.
 interface Props {
-  name: 'menu' | 'close' | 'check';
+  name: 'menu' | 'close' | 'check' | 'clock' | 'home';
   size?: number;
 }
 const { name, size = 20 } = Astro.props;
@@ -9,6 +9,8 @@ const paths = {
   menu: 'M3 6h14M3 10h14M3 14h14',
   close: 'M5 5l10 10M15 5L5 15',
   check: 'M4 10.5l4 4 8-9',
+  home: 'M3 9.5L10 3l7 6.5M5 8.5V17h10V8.5M8.5 17v-5h3v5',
+  clock: 'M10 3a7 7 0 1 0 0 14a7 7 0 1 0 0-14M10 6v4.5l3 1.5',
 } as const;
 ---
 
