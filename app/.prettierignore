@@ -1,0 +1,7 @@
+dist/
+.astro/
+drizzle/
+data/
+pnpm-lock.yaml
+public/
+*.md
