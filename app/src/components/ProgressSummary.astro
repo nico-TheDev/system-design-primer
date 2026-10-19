@@ -4,22 +4,30 @@ import type { Count } from '@/lib/progress';
 interface Props {
   topics: Count;
   exercises: Count;
+  practiced?: Count;
 }
-const { topics, exercises } = Astro.props;
+const { topics, exercises, practiced = { done: 0, total: 0 } } = Astro.props;
 const lines = [
-  { word: 'topics', count: topics },
-  { word: 'exercises', count: exercises },
+  { id: 'topics', text: `${topics.done} of ${topics.total} topics done`, count: topics },
+  {
+    id: 'exercises',
+    text: `${exercises.done} of ${exercises.total} exercises done`,
+    count: exercises,
+  },
+  {
+    id: 'practiced',
+    text: `${practiced.done} of ${practiced.total} exercises practiced`,
+    count: practiced,
+  },
 ].filter((line) => line.count.total > 0);
 ---
 
 {lines.length > 0 && (
   <div class="summary">
-    {lines.map(({ word, count }) => (
+    {lines.map(({ id, text, count }) => (
       <div class="line">
-        <label for={`progress-${word}`}>
-          {count.done} of {count.total} {word} done
-        </label>
-        <progress id={`progress-${word}`} value={count.done} max={count.total}></progress>
+        <label for={`progress-${id}`}>{text}</label>
+        <progress id={`progress-${id}`} value={count.done} max={count.total}></progress>
       </div>
     ))}
   </div>

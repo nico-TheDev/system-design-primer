@@ -2,6 +2,7 @@
 import PathRow from '@/components/PathRow.astro';
 import Shell from '@/layouts/Shell.astro';
 import { loadStudyPath } from '@/lib/load-study-path';
+import { practiceHref } from '@/lib/study-path';
 
 const { path } = await loadStudyPath();
 ---
@@ -14,7 +15,15 @@ const { path } = await loadStudyPath();
       <h2 class="running-head group-label">{group.label}</h2>
       <ol class="path-list">
         {group.items.map((e) => (
-          <PathRow number={e.number} title={e.title} href={e.href} done={e.done} />
+          <PathRow
+            number={e.number}
+            title={e.title}
+            href={e.href}
+            done={e.done}
+            practiceHref={practiceHref(e.id)}
+            practicing={e.practicing}
+            practiced={e.practiced}
+          />
         ))}
       </ol>
     </section>

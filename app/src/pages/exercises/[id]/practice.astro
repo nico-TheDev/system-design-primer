@@ -1,0 +1,165 @@
+---
+import { actions } from 'astro:actions';
+import { getEntry } from 'astro:content';
+import { getActive, listFinishedFor } from '@/db/practice';
+import { PracticeSession } from '@/components/islands/PracticeSession';
+import Button from '@/components/ui/Button.astro';
+import Shell from '@/layouts/Shell.astro';
+import { loadStudyPath } from '@/lib/load-study-path';
+import { formatClock, PRACTICE_STEPS, PRACTICE_TARGET_MS } from '@/lib/practice';
+import { formatDoneDate } from '@/lib/progress';
+import { toShellHeadings } from '@/lib/study-path';
+
+// Redirect after a saved start so a browser refresh never offers to resubmit the form.
+const started = Astro.getActionResult(actions.startPractice);
+if (started && !started.error) return Astro.redirect(Astro.url.pathname, 303);
+
+const { id } = Astro.params;
+const { path } = await loadStudyPath();
+const entry = path.exercises.find((e) => e.id === id);
+const exercise = id ? (await getEntry('exercises', id))?.data : undefined;
+if (!entry || !exercise) return Astro.rewrite('/404');
+
+const session = getActive(entry.id);
+const attempts = listFinishedFor(entry.id);
+const steps = PRACTICE_STEPS[exercise.kind];
+const startError = started?.error?.message;
+
+// The island below hydrates with client:load because the clock must run from page load and the bar sits at the top.
+// The solution leaves the server only after the reveal was saved.
+const showSolution = session?.revealed === true && exercise.split;
+const headings = [
+  ...toShellHeadings(exercise.problemHeadings, 0),
+  ...(showSolution
+    ? exercise.solution.flatMap((section) => [
+        { depth: 2, text: section.title, slug: section.anchor },
+        ...toShellHeadings(section.headings, 0),
+      ])
+    : []),
+];
+---
+
+<Shell
+  title={`Practice ${exercise.title} · System Design Study`}
+  runningHead={`${entry.number} · Practice · ${exercise.title}`}
+  nav={path.nav}
+  headings={session ? headings : []}
+>
+  <h1>{exercise.title}</h1>
+
+  {session ? (
+    <PracticeSession
+      client:load
+      exerciseId={entry.id}
+      kind={exercise.kind}
+      step={session.step}
+      revealed={session.revealed}
+      elapsedMs={session.elapsedMs}
+      runningSince={session.runningSince}
+      serverNow={Date.now()}
+    >
+      <Fragment set:html={exercise.problem} />
+      {showSolution &&
+        exercise.solution.map((section, index) => (
+          <>
+            {index === 0 && <p class="running-head solution-label">Solution</p>}
+            <h2 id={section.anchor}>{section.title}</h2>
+            <Fragment set:html={section.html} />
+          </>
+        ))}
+    </PracticeSession>
+  ) : !exercise.split ? (
+    <>
+      <p>
+        This exercise could not be split into problem and solution, so the answer cannot be hidden.
+      </p>
+      <p>
+        <a href={entry.href}>Read the exercise</a>
+      </p>
+    </>
+  ) : (
+    <>
+      <p class="steps-line">
+        Four steps: {steps.map((s) => s.title).join(', ')}. Target {formatClock(PRACTICE_TARGET_MS)}
+        .
+      </p>
+
+      <section aria-labelledby="attempts-heading">
+        <h2 id="attempts-heading">Attempts</h2>
+        {attempts.length === 0 ? (
+          <p>No attempts yet.</p>
+        ) : (
+          <>
+            <p>
+              Practiced {attempts.length} {attempts.length === 1 ? 'time' : 'times'}
+            </p>
+            <ol class="attempts">
+              {attempts.map((attempt) => (
+                <li>
+                  <span>{formatDoneDate(new Date(attempt.finishedAt))}</span>
+                  <span class="duration">{formatClock(attempt.durationMs)}</span>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+      </section>
+
+      <form method="POST" action={actions.startPractice} class="start-form">
+        <input type="hidden" name="exerciseId" value={entry.id} />
+        <Button type="submit" variant="primary">
+          Start practice
+        </Button>
+        {startError && (
+          <p role="alert" class="error">
+            {startError}
+          </p>
+        )}
+      </form>
+    </>
+  )}
+</Shell>
+
+<style>
+  .steps-line {
+    font-family: var(--font-hanken);
+    color: var(--ink-soft);
+  }
+  .attempts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--rule);
+    font-family: var(--font-hanken);
+  }
+  .attempts li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-block-end: 1px solid var(--rule);
+  }
+  .duration {
+    font-variant-numeric: tabular-nums;
+  }
+  .start-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    margin-block-start: 2rem;
+    font-family: var(--font-hanken);
+  }
+  .error {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--caution);
+    font-weight: 500;
+  }
+  .solution-label {
+    margin: 3rem 0 0;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+</style>

@@ -42,12 +42,20 @@ const Tag = href ? 'a' : 'button';
     background: var(--accent);
     color: var(--on-accent);
   }
+  /* Article links turn accent coloured when visited, which would match the fill. */
+  .btn-primary:visited {
+    color: var(--on-accent);
+  }
   .btn-primary:hover {
     background: color-mix(in oklab, var(--accent), var(--ink) 18%);
   }
   .btn-secondary {
     color: var(--ink);
     border-color: var(--rule-strong);
+  }
+  .btn-secondary:visited,
+  .btn-ghost:visited {
+    color: var(--ink);
   }
   .btn-secondary:hover {
     background: var(--accent-wash);
