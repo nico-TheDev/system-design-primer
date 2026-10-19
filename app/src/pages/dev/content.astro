@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+
+// Dev only: a page to check the content pipeline by eye (spec 0003).
+if (!import.meta.env.DEV) return new Response(null, { status: 404 });
+
+const topics = (await getCollection('topics'))
+  .map(({ data }) => data)
+  .sort((a, b) => a.order - b.order);
+const exercises = (await getCollection('exercises'))
+  .map(({ data }) => data)
+  .sort((a, b) => a.order - b.order);
+---
+
+<Base title="Content check">
+  <main id="main" class="mx-auto max-w-3xl p-8">
+    <h1 class="text-2xl font-semibold">Content pipeline check</h1>
+    <p class="mt-2">
+      {topics.length} topics, {exercises.length} exercises.
+    </p>
+
+    <h2 class="mt-8 text-xl font-semibold">Topics</h2>
+    {topics.map((topic) => (
+      <details class="mt-2 border-b py-2">
+        <summary>
+          {topic.order}. {topic.title}{' '}
+          <small>
+            ({topic.kind}, {topic.id})
+          </small>
+        </summary>
+        <div class="mt-3" set:html={topic.html} />
+      </details>
+    ))}
+
+    <h2 class="mt-8 text-xl font-semibold">Exercises</h2>
+    {exercises.map((exercise) => (
+      <details class="mt-2 border-b py-2">
+        <summary>
+          {exercise.order}. {exercise.title}{' '}
+          <small>
+            ({exercise.kind}, {exercise.id}, {exercise.split ? 'split' : 'whole page'})
+          </small>
+        </summary>
+        <h3 class="mt-3 font-semibold">Problem</h3>
+        <div set:html={exercise.problem} />
+        {exercise.solution.map((section) => (
+          <section>
+            <h3 id={section.anchor} class="mt-3 font-semibold">
+              Solution: {section.title}
+            </h3>
+            <div set:html={section.html} />
+          </section>
+        ))}
+      </details>
+    ))}
+  </main>
+</Base>
