@@ -18,8 +18,8 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 4 | Design system & UI foundation | Foundation | done |
 | 5 | Guided study path | Release 1 | done |
 | 6 | Progress tracking | Release 1 | done |
-| 7 | Exercise practice mode | Release 2 | planned |
-| 8 | Flashcards from the Anki decks | Release 3 | planned |
+| 7 | Exercise practice mode | Release 2 | done |
+| 8 | Flashcards from the Anki decks | Release 3 | in-progress |
 | 9 | Topic quizzes | Release 3 | planned |
 | 10 | Search | Release 4 | planned |
 | 11 | Floating study assistant | Release 5 | planned |
@@ -102,17 +102,32 @@ spec [0006](../specs/0006-progress-tracking.md) · code in `app/src/db/`, `app/s
 
 ## Release 2: Practice the exercises
 
-### 7. Exercise practice mode · needs a decision
+### 7. Exercise practice mode · done
 Interview style practice for each exercise: you see only the problem, work through the 4 step framework with prompts and a timer, then reveal the solution and diagrams to compare.
 **Done when:** you can start any exercise with the solution hidden, run a timed session with step prompts, reveal the solution, and the exercise is marked practiced.
-- [ ] Design it (spec): `/architect exercise practice mode`
+spec [0007](../specs/0007-exercise-practice-mode/index.md) · code in `app/src/db/practice.ts`, `app/src/lib/practice.ts`, `app/src/actions/`, `app/src/components/islands/`, `app/src/pages/exercises/`
+- [x] Design it (spec): `/architect exercise practice mode`
+- [x] Build it: `/develop exercise practice mode`
+  - [x] Practice table, migration, data access, pure clock helpers and the six actions (AC-3, AC-6, AC-7, AC-8, AC-9, AC-12)
+  - [x] Practice page with the start form, the 404 and unsplit notice, and the Practice links (AC-1, AC-2, AC-3)
+  - [x] Session island: timer, steps, reveal, finish, discard (AC-4 to AC-9)
+  - [x] Attempts list, practiced marks on rows, sidebar and home summary (AC-10, AC-11)
+  - [x] Stale clock, two tab, small screen check, and the build passes (AC-6, AC-12, AC-13, AC-14)
+- [x] Verify it: `/check verify exercise practice mode`
 
 ## Release 3: Review and recall
 
-### 8. Flashcards from the Anki decks · needs a decision
+### 8. Flashcards from the Anki decks · in-progress
 Bring the cards in the three `.apkg` decks into the app and review them with spaced repetition, so daily review happens in the same place as studying.
 **Done when:** all three decks load with their cards intact, a daily review session shows the cards that are due, and your answers change when each card comes back.
-- [ ] Design it (spec): `/architect flashcards from the Anki decks`
+spec [0008](../specs/0008-flashcards-anki-decks/index.md) · code in `app/src/db/apkg.ts`, `app/src/db/flashcards.ts`, `app/src/content-pipeline/cards.ts`, `app/src/content-pipeline/card-loader.ts`, `app/src/lib/flashcards*.ts`, `app/src/actions/`, `app/src/components/islands/ReviewSession.tsx`, `app/src/pages/flashcards/`
+- [x] Design it (spec): `/architect flashcards from the Anki decks`
+- [x] Build it: `/develop flashcards from the Anki decks`
+  - [x] Decks load as a cleaned `cards` collection with live reload (AC-1, AC-2, AC-12)
+  - [x] Schedule tables, scheduler and the rate and undo Actions (AC-5, AC-8, AC-10)
+  - [x] Flashcards page and the review session island (AC-3, AC-4, AC-6, AC-7, AC-8, AC-11)
+  - [x] Sidebar badge, home line, edge pass, and the build passes (AC-9, AC-10, AC-11, AC-13)
+- [ ] Verify it: `/check verify flashcards from the Anki decks`
 
 ### 9. Topic quizzes · needs a decision
 A short quiz at the end of a topic, using the deck cards that match it, to check you understood it before moving on.

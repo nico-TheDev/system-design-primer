@@ -60,6 +60,7 @@ Run `pnpm check` before every commit. No hooks or CI run it for you.
 - [0004 design system and UI foundation](../docs/specs/0004-design-system-ui-foundation/index.md)
 - [0005 guided study path](../docs/specs/0005-guided-study-path/index.md)
 - [0006 progress tracking](../docs/specs/0006-progress-tracking.md)
+- [0007 exercise practice mode](../docs/specs/0007-exercise-practice-mode/index.md)
 - Design system: build all UI to [DESIGN.md](DESIGN.md) (art direction); token values live in CSS.
 
 _Drafted by /audit from the repo, worth a quick human pass. Edit freely: once a line stops matching this draft, later runs treat it as curated and will flag rather than overwrite it._
